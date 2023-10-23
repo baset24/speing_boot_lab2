@@ -15,5 +15,17 @@ public interface UserRepository extends JpaRepository<User,Long>{
 
     public List<User> findByAgeGreaterThanEqual(Integer age);
 
+    // i added yhis methode
+
+    public void deleteById(Long userId);
+
+    public List<User> findByEmailEndingWith(String domain);
+
+    // public List<User> findUsersByFirstName(String firstName);
+
+    // public List<User> findUsersByAddressCity(String city);
+
+
+
     
 }
