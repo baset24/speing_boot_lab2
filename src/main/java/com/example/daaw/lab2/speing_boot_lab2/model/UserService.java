@@ -3,6 +3,8 @@ package com.example.daaw.lab2.speing_boot_lab2.model;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,12 +36,20 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
-    public void deleteUser(Long id){
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
-    public List<User> getUserByEmailDoamin(String domain){
-        return userRepository.findByEmailEndingWith(domain);
+    public Page<User> getUserByEmailDoamin(String domain, Pageable page) {
+        return userRepository.findByEmailEndingWith(domain, page);
+    }
+
+    public Page<User> getUser(String firstName,String lastName,String email,Pageable page) {
+        return userRepository.findByFirstNameOrLastNameOrEmailIgnoreCaseContaining(firstName,lastName,email,page);
+    }
+
+     public Page<User> getUserUsingAdress(String country,String city,Pageable page) {
+        return userRepository.findByCityOrCountry(country,city,page);
     }
 
 

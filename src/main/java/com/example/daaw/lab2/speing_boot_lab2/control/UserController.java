@@ -5,14 +5,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.JpaSort.Path;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.daaw.lab2.speing_boot_lab2.model.Address;
@@ -147,9 +150,59 @@ public class UserController {
     }
 
     // http://localhost:8080/getByEmailDomain/@univ-adrar.dz
-    @GetMapping("/getByEmailDomain/{domain}")
-    public List<User> findUsersByEmailDomain(@PathVariable String domain) {
-        return userService.getUserByEmailDoamin(domain);
+    // @GetMapping("/getByEmailDomain/{domain}")
+    // public List<User> findUsersByEmailDomain(@PathVariable String domain) {
+
+    // return userService.getUserByEmailDoamin(domain);
+    // }
+
+    // http://localhost:8080/getByEmailDomain/@univ-adrar.dz/2
+    @GetMapping("/getByEmailDomain/{domain}/{page}")
+    public List<User> findUsersByEmailDomain(@PathVariable String domain, @PathVariable int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userService.getUserByEmailDoamin(domain, pageable);
+        List<User> userList = userPage.getContent();
+        return userList;
+    }
+
+    // //http://localhost:8080/getUserByFirstName/hala/0
+    // @GetMapping("getUserByFirstName/{firstName}/{lastName}/email={eamil}/{page}")
+    // public List<User> getUserFirstNameOrLastNamaOrEmail(@PathVariable String
+    // firstName, @PathVariable int page) {
+    // int size = 5;
+    // Pageable pageable = PageRequest.of(page, size);
+    // Page<User> userPage = userService.getUser(firstName, pageable);
+    // List<User> userList = userPage.getContent();
+    // return userList;
+    // // return userService.getUserByFirstName(firstName);
+    // }
+
+    // http://localhost:8080/firstname=?/lastname=?hala/email=?/0
+    @GetMapping("/{firstName}/{lastName}/{email}/{page}")
+    public List<User> getUserFirstName(@PathVariable Optional<String> firstName,
+            @PathVariable Optional<String> lastName,
+            @PathVariable Optional<String> email, int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userService.getUser(firstName.orElse("defaultFirstName"),
+                lastName.orElse("defaultLastName"), email.orElse("defaultEmail"), pageable);
+        List<User> userList = userPage.getContent();
+        return userList;
+    }
+
+
+
+    //http://localhost:8080/getUserByAdress/Adrar/Algeria/0
+    @GetMapping("/getUserByAdress/{city}/{country}/{page}")
+    public List<User> getUserbyAdress(@PathVariable Optional<String> city, @PathVariable Optional<String> country,
+            @PathVariable int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userService.getUserUsingAdress(city.orElse("defaultFirstName"),
+                country.orElse("defaultLastName"), pageable);
+        List<User> userList = userPage.getContent();
+        return userList;
     }
 
 }
